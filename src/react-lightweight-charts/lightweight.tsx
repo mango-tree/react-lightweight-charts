@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import {
-  createChart, PriceLineSource, LineStyle
+  createChart, PriceLineSource, LineStyle, SeriesOptionsCommon, PriceScaleOptions, LineWidth, PriceScaleMargins, WatermarkOptions, LayoutOptions, CrosshairOptions, TimeScaleOptions, GridOptions, LocalizationOptions, HandleScrollOptions, HandleScaleOptions
 } from 'lightweight-charts';
 
 
@@ -14,7 +14,7 @@ export interface PriceFormat {
   type: 'price' | 'volume' | 'percent' | 'custom';
   precision: number;
   minMove: number;
-  formatter: (arg: 'price' | 'volume' | 'percent' | 'custom') => string[] | undefined;
+  formatter?: (arg: 'price' | 'volume' | 'percent' | 'custom') => string[] | undefined;
 }
 
 export interface TimeScale {
@@ -31,31 +31,71 @@ export interface TimeScale {
 }
 
 export interface LightweightProps {
-  data: ChartData[];
-  width: number;
-  height: number;
-  series: 'line' | 'bar' | 'area';
-  overlay: boolean;
-  title: string;
-  scaleMargins: {
-    top: number;
-    bottom: number;
-  } | undefined;
-  priceLineVisible:	boolean;
-  priceLineSource: PriceLineSource;
-  priceLineColor: string;
-  priceLineStyle: LineStyle;
-  lastValueVisible: boolean;
-  baseLineVisible: boolean;
-  baseLineColor: string;
-  baseLineWidth: number;
-  baseLineStyle: LineStyle;
-  priceFormat: PriceFormat;
-  timeScale: TimeScale;
+  data?: ChartData[];
+  width?: number;
+  height?: number;
+	watermark?: WatermarkOptions;
+	layout?: LayoutOptions;
+	priceScale?: PriceScaleOptions;
+	timeScale?: TimeScaleOptions;
+	crosshair?: CrosshairOptions;
+	grid?: GridOptions;
+	localization?: LocalizationOptions;
+	handleScroll?: HandleScrollOptions | boolean;
+	handleScale?: HandleScaleOptions | boolean;
+
+  series?: 'line' | 'bar' | 'area';
+  overlay?: boolean;
+  title?: string;
+  scaleMargins?: PriceScaleMargins;
+  priceLineVisible?:	boolean;
+  priceLineSource?: PriceLineSource;
+  priceLineWidth?: LineWidth;
+  priceLineColor?: string;
+  priceLineStyle?: LineStyle;
+  lastValueVisible?: boolean;
+  baseLineVisible?: boolean;
+  baseLineColor?: string;
+  baseLineWidth?: number;
+  baseLineStyle?: LineStyle;
+  priceFormat?: PriceFormat;
+  // timeScale?: TimeScale;
+}
+
+const defaultPriceFormat: PriceFormat = {
+  type: 'price',
+  precision: 2,
+  minMove: 0.01,
 }
 
 const Lightweight: React.FC<LightweightProps> = (props) => {
-  const { data, width, height } = props;
+  const {
+    data,
+    width,
+    height,
+    watermark,
+    layout,
+    priceScale,
+    timeScale,
+    crosshair,
+    grid,
+    localization,
+    handleScroll,
+    handleScale,
+
+    title,
+    scaleMargins,
+    priceLineVisible,
+    priceLineSource,
+    priceLineWidth,
+    priceLineColor,
+    priceLineStyle,
+    lastValueVisible,
+    baseLineVisible,
+    baseLineColor,
+    baseLineWidth,
+    baseLineStyle,
+  } = props;
   const chartRef = useRef<any | null>(null);
   const [lines, setLines] = useState<any | null>(null);
 
@@ -63,10 +103,19 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
     const chart = createChart(chartRef.current, {
       width,
       height,
+      watermark,
+      layout,
+      priceScale,
+      timeScale,
+      crosshair,
+      grid,
+      localization,
+      handleScroll,
+      handleScale,
     });
     chart.applyOptions({
       timeScale: { rightOffset: 11, timeVisible: true },
-      priceScale: { autoScale: true }
+      priceScale: { autoScale: true },
     });
     const lineSeries = chart.addLineSeries({overlay: true});
     setLines(lineSeries)
