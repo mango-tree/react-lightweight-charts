@@ -24,7 +24,7 @@ function App() {
       <Lightweight
         width={600}
         height={380}
-        // series="line"
+        series="line"
         // overlay={true}
         // title="Series title example"
         // scaleMargins={{

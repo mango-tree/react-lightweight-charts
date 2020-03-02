@@ -56,16 +56,10 @@ export interface LightweightProps {
   lastValueVisible?: boolean;
   baseLineVisible?: boolean;
   baseLineColor?: string;
-  baseLineWidth?: number;
+  baseLineWidth?: LineWidth;
   baseLineStyle?: LineStyle;
   priceFormat?: PriceFormat;
   // timeScale?: TimeScale;
-}
-
-const defaultPriceFormat: PriceFormat = {
-  type: 'price',
-  precision: 2,
-  minMove: 0.01,
 }
 
 const Lightweight: React.FC<LightweightProps> = (props) => {
@@ -83,6 +77,8 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
     handleScroll,
     handleScale,
 
+    series,
+
     title,
     scaleMargins,
     priceLineVisible,
@@ -95,9 +91,11 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
     baseLineColor,
     baseLineWidth,
     baseLineStyle,
+
+    priceFormat
   } = props;
   const chartRef = useRef<any | null>(null);
-  const [lines, setLines] = useState<any | null>(null);
+  const [appliedSeries, setAppliedSeries] = useState<any | null>(null);
 
   useEffect(() => {
     const chart = createChart(chartRef.current, {
@@ -117,15 +115,66 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
       timeScale: { rightOffset: 11, timeVisible: true },
       priceScale: { autoScale: true },
     });
-    const lineSeries = chart.addLineSeries({overlay: true});
-    setLines(lineSeries)
-  }, [chartRef, width, height]);
+    if (series === 'line') {
+      const addedSeries = chart.addLineSeries({
+        title,
+        priceLineVisible,
+        priceLineSource,
+        priceLineWidth,
+        priceLineColor,
+        priceLineStyle,
+        lastValueVisible,
+        baseLineVisible,
+        baseLineColor,
+        baseLineStyle,
+	      priceFormat,
+	      baseLineWidth,
+      });
+      setAppliedSeries(addedSeries)
+    } else if (series === 'bar') {
+      const addedSeries = chart.addBarSeries({overlay: true});
+      setAppliedSeries(addedSeries)
+    } else if (series === 'area') {
+      const addedSeries = chart.addAreaSeries({overlay: true});
+      setAppliedSeries(addedSeries)
+    }
+  }, [
+    chartRef,
+    data,
+    width,
+    height,
+    watermark,
+    layout,
+    priceScale,
+    timeScale,
+    crosshair,
+    grid,
+    localization,
+    handleScroll,
+    handleScale,
+
+    series,
+
+    title,
+    scaleMargins,
+    priceLineVisible,
+    priceLineSource,
+    priceLineWidth,
+    priceLineColor,
+    priceLineStyle,
+    lastValueVisible,
+    baseLineVisible,
+    baseLineColor,
+    baseLineWidth,
+    baseLineStyle,
+    priceFormat
+  ]);
 
   useEffect(() => {
-    if (lines) {
-      lines.setData(data);
+    if (appliedSeries) {
+      appliedSeries.setData(data);
     }
-  }, [lines, data]);
+  }, [appliedSeries, data]);
 
   return (
     <div>
