@@ -1,9 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import {
-  createChart, PriceLineSource, LineStyle, SeriesOptionsCommon, PriceScaleOptions, LineWidth, PriceScaleMargins, WatermarkOptions, LayoutOptions, CrosshairOptions, TimeScaleOptions, GridOptions, LocalizationOptions, HandleScrollOptions, HandleScaleOptions
+  createChart,
+  PriceLineSource,
+  LineStyle,
+  SeriesOptionsCommon,
+  PriceScaleOptions,
+  LineWidth,
+  PriceScaleMargins,
+  WatermarkOptions,
+  LayoutOptions,
+  CrosshairOptions,
+  TimeScaleOptions,
+  GridOptions,
+  LocalizationOptions,
+  HandleScrollOptions,
+  HandleScaleOptions,
+  SeriesMarker,
+  Time,
+  PriceLineOptions
 } from 'lightweight-charts';
 
+export { LineStyle } from 'lightweight-charts';
 
 export interface ChartData {
   time: string; // 2019-02-15
@@ -59,10 +77,12 @@ export interface LightweightProps {
   baseLineWidth?: LineWidth;
   baseLineStyle?: LineStyle;
   priceFormat?: PriceFormat;
+  markers?: SeriesMarker<Time>[];
+  priceLines?: any[];
   // timeScale?: TimeScale;
 }
 
-const Lightweight: React.FC<LightweightProps> = (props) => {
+export const Lightweight: React.FC<LightweightProps> = (props) => {
   const {
     data,
     width,
@@ -92,7 +112,10 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
     baseLineWidth,
     baseLineStyle,
 
-    priceFormat
+    priceFormat,
+
+    markers,
+    priceLines,
   } = props;
   const chartRef = useRef<any | null>(null);
   const [appliedSeries, setAppliedSeries] = useState<any | null>(null);
@@ -175,6 +198,24 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
       appliedSeries.setData(data);
     }
   }, [appliedSeries, data]);
+  
+  useEffect(() => {
+    if (appliedSeries) {
+      if (markers && markers.length > 0){
+        appliedSeries.setMarkers(markers);
+      }
+    }
+  }, [appliedSeries, markers]);
+
+  useEffect(() => {
+    if (appliedSeries) {
+      if (priceLines && priceLines.length > 0){
+        for (let priceline in priceLines) {
+          appliedSeries.createPriceLine(priceline);
+        }
+      }
+    }
+  }, [appliedSeries, priceLines]);
 
   return (
     <div>
@@ -184,5 +225,3 @@ const Lightweight: React.FC<LightweightProps> = (props) => {
     </div>
   )
 }
-
-export default Lightweight;

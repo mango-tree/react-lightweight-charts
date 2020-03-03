@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import Lightweight from './react-lightweight-charts'
+import { Lightweight, LineStyle } from './react-lightweight-charts'
 
 import './App.css';
 
@@ -36,6 +36,9 @@ function App() {
         // priceLineColor="#4682B4"
         // priceLineStyle={3}
         data={[
+          { time: '2019-04-08', value: 80.01 },
+          { time: '2019-04-09', value: 84.01 },
+          { time: '2019-04-10', value: 78.01 },
           { time: '2019-04-11', value: 80.01 },
           { time: '2019-04-12', value: 96.63 },
           { time: '2019-04-13', value: 76.64 },
@@ -47,6 +50,35 @@ function App() {
           { time: '2019-04-19', value: 81.89 },
           { time: '2019-04-20', value: 74.43 },
         ]}
+        markers={[
+            {
+                time: '2019-04-09',
+                position: 'aboveBar',
+                color: 'black',
+                shape: 'arrowDown',
+            },
+            {
+                time: '2019-05-31',
+                position: 'belowBar',
+                color: 'red',
+                shape: 'arrowUp',
+                id: 'id3',
+            },
+            {
+                time: '2019-05-31',
+                position: 'belowBar',
+                color: 'orange',
+                shape: 'arrowUp',
+                id: 'id4',
+            },
+        ]}
+        priceLines={[{
+          price: 80.0,
+          color: 'green',
+          lineWidth: 2,
+          lineStyle: LineStyle.Solid,
+          axisLabelVisible: true,
+      }]}
       />
     </div>
   );
